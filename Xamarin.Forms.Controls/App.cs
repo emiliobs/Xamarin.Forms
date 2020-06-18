@@ -46,6 +46,16 @@ namespace Xamarin.Forms.Controls
 			//TestIssue2393();
 		}
 
+		protected override void OnSleep()
+		{
+			base.OnSleep();
+
+			if(Current.MainPage is Issue10182 issue10182)
+			{
+				issue10182.OnSleep();
+			}
+		}
+
 		async Task TestBugzilla44596()
 		{
 			await Task.Delay(50);

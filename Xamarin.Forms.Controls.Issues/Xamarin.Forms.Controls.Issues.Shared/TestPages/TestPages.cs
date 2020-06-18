@@ -59,7 +59,7 @@ namespace Xamarin.Forms.Controls
 		}
 
 #if __ANDROID__
-		static IApp InitializeAndroidApp()
+		public static IApp InitializeAndroidApp()
 		{
 			var fullApkPath = Path.Combine(TestContext.CurrentContext.TestDirectory, AppPaths.ApkPath);
 			var app = ConfigureApp.Android.ApkFile(fullApkPath).Debug().StartApp(UITest.Configuration.AppDataMode.DoNotClear);

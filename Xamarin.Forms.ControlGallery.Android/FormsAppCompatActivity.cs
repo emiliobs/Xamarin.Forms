@@ -11,13 +11,13 @@ using Xamarin.Forms.Platform.Android;
 using Xamarin.Forms.Platform.Android.AppLinks;
 using System.Linq;
 using Xamarin.Forms.Internals;
+using Android.Support.V7.App;
 
 namespace Xamarin.Forms.ControlGallery.Android
 {
 	// This is the AppCompat version of Activity1
 
-	[Activity(Label = "Control Gallery", Icon = "@drawable/icon", Theme = "@style/MyTheme",
-		MainLauncher = true, HardwareAccelerated = true, 
+	[Activity(Label = "Control Gallery", Icon = "@drawable/icon", Theme = "@style/MyTheme", MainLauncher = true, HardwareAccelerated = true, 
 		ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.UiMode)]
 	[IntentFilter(new[] { Intent.ActionView },
 		Categories = new[]
@@ -103,10 +103,24 @@ namespace Xamarin.Forms.ControlGallery.Android
 #endif
 		}
 
-		protected override void OnResume()
+		/*protected async override void OnResume()
 		{
 			base.OnResume();
 			Profile.Stop();
+
+			await System.Threading.Tasks.Task.Delay(2000);
+			BackgroundApp();
+			await System.Threading.Tasks.Task.Delay(2000);
+			ForegroundApp();
+		}*/
+
+		protected async override void OnPause()
+		{
+			base.OnPause();
+			await System.Threading.Tasks.Task.Delay(2000);
+
+
+			ForegroundApp();
 		}
 
 		[Export("IsPreAppCompat")]
@@ -114,6 +128,91 @@ namespace Xamarin.Forms.ControlGallery.Android
 		{
 			return false;
 		}
+
+		[Java.Interop.Export("BackgroundApp")]
+		public void BackgroundApp()
+		{
+			/*Intent intent = new Intent();
+			intent.SetAction(Intent.ActionMain);
+			intent.AddCategory(Intent.CategoryHome);
+			this.StartActivity(intent);*/
+		}
+
+		[Java.Interop.Export("ForegroundApp")]
+		public void ForegroundApp()
+		{
+
+			Intent intent = new Intent(ApplicationContext, typeof(Activity1));
+			intent.SetAction(Intent.ActionMain);
+			intent.AddCategory(Intent.CategoryLauncher);
+			this.ApplicationContext.StartActivity(intent);
+
+			/*Intent i = PackageManager
+				.GetLaunchIntentForPackage(PackageName)
+				.SetPackage(null)
+				.SetFlags(ActivityFlags.NewTask | ActivityFlags.ResetTaskIfNeeded);
+			*/
+
+			/*try
+			{
+				Intent sendIntent = new Intent(this, typeof(DemoService));
+
+				sendIntent.PutExtra("TaskId", TaskId);
+				StartService(sendIntent);
+			}
+			catch(System.Exception exc)
+			{
+				System.Diagnostics.Debug.WriteLine($"{exc}");
+			}*/
+
+			/*Intent intent = new Intent(this, typeof(ResumeActivity));
+			intent.SetAction(Intent.ActionMain);
+			intent.AddCategory(Intent.CategoryLauncher);
+			//intent.AddFlags(ActivityFlags.BroughtToFront | ActivityFlags.ReorderToFront);
+
+			
+			this.StartActivity(intent);*/
+
+			/*ActivityManager activityManager =
+				(ActivityManager)ApplicationContext
+				.GetSystemService(Context.ActivityService);
+
+
+			activityManager.MoveTaskToFront(TaskId, MoveTaskFlags.WithHome);
+			*/
+		}
+
+		//[Service]
+		//public class DemoService : IntentService
+		//{
+		//	public DemoService() : base("DemoService")
+		//	{
+
+		//	}
+
+
+		//	protected async override void OnHandleIntent(Intent intent)
+		//	{
+		//		await System.Threading.Tasks.Task.Delay(2000);
+
+		//		/*var taskId = intent.GetIntExtra("TaskId", -1);
+		//		ActivityManager activityManager =
+		//			(ActivityManager)ApplicationContext
+		//			.GetSystemService(Context.ActivityService);
+		//		activityManager.MoveTaskToFront(taskId, MoveTaskFlags.NoUserAction);
+		//		*/
+
+		//		Intent intent2 = new Intent(this, typeof(Activity1));
+		//		intent2.SetAction(Intent.ActionMain);
+		//		intent2.AddCategory(Intent.CategoryLauncher);
+		//		//intent2.AddFlags(ActivityFlags.ReorderToFront);
+		//		intent2.AddFlags(ActivityFlags.SingleTop);
+
+
+		//		this.StartActivity(intent2);
+		//	}
+		//}
+
 	}
 }
 
